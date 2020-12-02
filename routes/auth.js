@@ -2,13 +2,14 @@ const router = require('express').Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { registerValidation, loginValidation } = require('../validation');
+const { valid } = require('@hapi/joi');
 
 router.post('/register', async (req, res) => {
   // validate data before sending
   const { error } = registerValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  // check if user already in database
+  // check if user already in database by email
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist) return res.status(400).send('Email already exists');
 
@@ -31,10 +32,22 @@ router.post('/register', async (req, res) => {
 });
 
 // LOGIN
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   // validate data before sending
   const { error } = loginValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
+
+  // check if user already in database
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) return res.status(400).send('Email or password is invalid');
+
+  // check if password is correct
+  const validPass = await bcrypt.compare(req.body.password, user.password);
+  if (!validPass) return res.status(400).send('Invalid password');
+
+  res.send('Login Successful');
+
+  
 });
 
 module.exports = router;
