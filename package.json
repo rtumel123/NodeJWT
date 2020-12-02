@@ -1,5 +1,5 @@
 {
-  "name": "NodeJWT",
+  "name": "node-jwt",
   "version": "1.0.0",
   "description": "node api with jwt authentication",
   "main": "index.js",
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/rtumel123/NodeJWT#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "mongoose": "^5.11.1",
     "nodemon": "^2.0.6"
   }
 }
